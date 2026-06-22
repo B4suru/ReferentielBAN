@@ -17,12 +17,12 @@ public class BanApplication {
 	}
 	
 	@Bean
-	public CommandLineRunner run(JobLauncher launcher, Job helloWorldJob) {
+	public CommandLineRunner run(JobLauncher launcher, Job banBatchJob) {
 		return args -> {
 			JobParameters params = new JobParametersBuilder()
 					.addLong("startAt", System.currentTimeMillis())
 					.toJobParameters();
-			launcher.run(helloWorldJob, params);
+			launcher.run(banBatchJob, params);
 		};
 	}
 }
