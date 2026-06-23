@@ -1,11 +1,15 @@
 package natSystem.BAN.batchConfig;
 
+import java.util.Arrays;
+
 import javax.sql.DataSource;
 
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.job.Job;
 import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.repository.JobRepository;
+import org.springframework.batch.core.repository.persistence.ExitStatus;
+import org.springframework.batch.core.repository.persistence.StepExecution;
 import org.springframework.batch.core.step.Step;
 import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.infrastructure.item.ItemProcessor;
@@ -14,37 +18,53 @@ import org.springframework.batch.infrastructure.item.database.JdbcBatchItemWrite
 import org.springframework.batch.infrastructure.item.database.builder.JdbcBatchItemWriterBuilder;
 import org.springframework.batch.infrastructure.item.file.FlatFileItemReader;
 import org.springframework.batch.infrastructure.item.file.builder.FlatFileItemReaderBuilder;
+import org.springframework.batch.infrastructure.item.support.CompositeItemProcessor;
+import org.springframework.batch.infrastructure.item.validator.ValidatingItemProcessor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.transaction.PlatformTransactionManager;
 
+import natSystem.BAN.batch.stepListener.BanStepListener;
 import natSystem.BAN.entity.Ban;
+import natSystem.BAN.validator.RowValidator;
 
 
 @Configuration
 public class banBatchConfig {
 	@Bean
-	public Job banBatchJob(JobRepository jobRepository, Step banStep1) {
+	public Job banBatchJob(JobRepository jobRepository, Step banStep) {
 		return new JobBuilder("banBatchJob", jobRepository)
-				.start(banStep1)
+				.start(banStep)
 				.build();
 	}
 	
 	@Bean
-	public Step banStep1(JobRepository jobRepository, PlatformTransactionManager txtManager,
+	public Step banStep(JobRepository jobRepository, PlatformTransactionManager txtManager,
 			FlatFileItemReader<Ban> csvReader,
-			ItemProcessor<Ban, Ban> processor,
-			ItemWriter<Ban> writer) {
-		return new StepBuilder("banStep1", jobRepository)
+			CompositeItemProcessor<Ban, Ban> compositeItemProcessor,
+			ItemWriter<Ban> writer,
+			BanStepListener listener) {
+		return new StepBuilder("banStep", jobRepository)
 				.<Ban, Ban>chunk(1000)
 				.transactionManager(txtManager)
 				.reader(csvReader)
-				.processor(processor)
+				.processor(compositeItemProcessor)
 				.writer(writer)
+				.listener(listener)
 				.build();
 		
+	}
+	
+	@Bean
+	public CompositeItemProcessor<Ban, Ban> compositeProcessor(
+	        ValidatingItemProcessor<Ban> validatingProcessor,
+	        ItemProcessor<Ban, Ban> processor
+	) {
+	    CompositeItemProcessor<Ban, Ban> composite = new CompositeItemProcessor<>();
+	    composite.setDelegates(Arrays.asList(validatingProcessor, processor));
+	    return composite;
 	}
 	
 	@Bean
@@ -69,6 +89,13 @@ public class banBatchConfig {
 
 	        return match ? ban : null;
 	    };
+	}
+	
+	@Bean
+	public ValidatingItemProcessor<Ban> validatingProcessor() {
+	    ValidatingItemProcessor<Ban> validator = new ValidatingItemProcessor<>(new RowValidator());
+	    validator.setFilter(true);
+	    return validator;
 	}
 	
 	@Bean
