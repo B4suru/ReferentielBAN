@@ -1,5 +1,7 @@
-package natSystem.BAN.validator;
+package natSystem.BAN.batch.validator;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 import org.springframework.batch.infrastructure.item.validator.ValidationException;
@@ -11,6 +13,8 @@ import natSystem.BAN.file.File;
 
 public class RowValidator implements Validator<Ban> {
 	private static final Pattern ID_PATTERN = Pattern.compile("^\\d{5}_[a-zA-Z0-9]{4,6}_\\d{5}(_.+)?$");
+	
+	private final Set<String> idsVus = new HashSet<>();
 
 	@Override
 	public void validate(Ban ban) throws ValidationException {
@@ -19,18 +23,23 @@ public class RowValidator implements Validator<Ban> {
 			logs.write("L'id ne peut pas être vide");
 			throw new ValidationException("L'id ne peut pas être vide");
 		}
+		
 		if (!ID_PATTERN.matcher(ban.getId()).matches()) {
 			logs.write("Format d'id invalide : " + ban.getId());
 	        throw new ValidationException("Format d'id invalide : " + ban.getId());
-	        
 	    }
+		
+		if (!idsVus.add(ban.getId())) {
+            logs.write("Doublon détecté, ligne ignorée (id : " + ban.getId() + ")");
+            throw new ValidationException("Doublon détecté (id : " + ban.getId() + ")");
+        }
 		
 		if (ban.getNumero() < 0) {
 			logs.write("Le numero ne peux pas etre inférieur a 0 (id : " + ban.getId()+ ")");
 			throw new ValidationException("Le numero ne peux pas etre inférieur a 0 (id : " + ban.getId()+ ")");
 		}
 		
-		if (ban.getNomVoie() == null || ban.getId().isBlank()) {
+		if (ban.getNomVoie() == null || ban.getNomVoie().isBlank()) {
 			logs.write("Le nom de la voie ne peut pas être vide (id : " + ban.getId()+ ")");
 			throw new ValidationException("Le nom de la voie ne peut pas être vide (id : " + ban.getId()+ ")");
 		}

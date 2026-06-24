@@ -1,4 +1,4 @@
-package natSystem.BAN.batchConfig;
+package natSystem.BAN.batch.config;
 
 import java.util.Arrays;
 
@@ -27,8 +27,8 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import natSystem.BAN.batch.stepListener.BanStepListener;
+import natSystem.BAN.batch.validator.RowValidator;
 import natSystem.BAN.entity.Ban;
-import natSystem.BAN.validator.RowValidator;
 
 
 @Configuration
@@ -143,7 +143,7 @@ public class banBatchConfig {
 				    b.setLon(fs.readDouble("lon"));
 				    b.setLat(fs.readDouble("lat"));
 				    return b;})
-			 .linesToSkip(1) // ignorer l'en-tête
+			 .linesToSkip(1)
 			 .build();
 	}
 
@@ -177,18 +177,7 @@ public class banBatchConfig {
 		    :y,
 		    :lon,
 		    :lat
-		)
-		ON CONFLICT(id) DO UPDATE SET
-		    numero = excluded.numero,
-		    rep = excluded.rep,
-		    nom_voie = excluded.nom_voie,
-		    code_postal = excluded.code_postal,
-		    code_insee = excluded.code_insee,
-		    nom_commune = excluded.nom_commune,
-		    x = excluded.x,
-		    y = excluded.y,
-		    lon = excluded.lon,
-		    lat = excluded.lat;
+		);
 	 """)
 	 .beanMapped()
 	 .build();
