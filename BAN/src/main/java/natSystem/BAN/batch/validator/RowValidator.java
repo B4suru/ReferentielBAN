@@ -10,7 +10,7 @@ import org.springframework.batch.infrastructure.item.validator.ValidationExcepti
 import org.springframework.batch.infrastructure.item.validator.Validator;
 
 import natSystem.BAN.entity.Ban;
-import natSystem.BAN.file.File;
+import natSystem.BAN.tools.file.File;
 
 
 public class RowValidator implements Validator<Ban> {

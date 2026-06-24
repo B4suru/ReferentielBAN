@@ -8,8 +8,6 @@ import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.job.Job;
 import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.repository.JobRepository;
-import org.springframework.batch.core.repository.persistence.ExitStatus;
-import org.springframework.batch.core.repository.persistence.StepExecution;
 import org.springframework.batch.core.step.Step;
 import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.infrastructure.item.ItemProcessor;
@@ -23,7 +21,7 @@ import org.springframework.batch.infrastructure.item.validator.ValidatingItemPro
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import natSystem.BAN.batch.stepListener.BanStepListener;
@@ -99,12 +97,15 @@ public class banBatchConfig {
 	}
 	
 	@Bean
-	public FlatFileItemReader<Ban> csvReader() {
+	@StepScope
+	public FlatFileItemReader<Ban> csvReader(
+			@Value("#{jobParameters['cheminFichierCsv']}") String cheminFichierCsv) {
 		return new FlatFileItemReaderBuilder<Ban>()
 			 .name("banCsvReader")
-			 .resource(new ClassPathResource("adresses-79.csv"))
+			 .resource(new FileSystemResource(cheminFichierCsv))
 			 .delimited()
 			 .delimiter(";")
+			 .strict(false)
 			 .names("id",
 	                    "id_fantoir",
 	                    "numero",
@@ -127,7 +128,11 @@ public class banBatchConfig {
 	                    "source_position",
 	                    "source_nom_voie",
 	                    "certification_commune",
-	                    "cad_parcelles")
+	                    "cad_parcelles",
+	                    "id_ban_adresse",
+	                    "id_ban_toponyme",
+	                    "id_ban_commune"
+)
 			 .fieldSetMapper(fs -> {
 				    Ban b = new Ban();
 

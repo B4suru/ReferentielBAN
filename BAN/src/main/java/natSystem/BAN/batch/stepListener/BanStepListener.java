@@ -5,7 +5,7 @@ import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.step.StepExecution;
 import org.springframework.stereotype.Component;
 
-import natSystem.BAN.file.File;
+import natSystem.BAN.tools.file.File;
 
 @Component
 public class BanStepListener implements StepExecutionListener {

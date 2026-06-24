@@ -13,7 +13,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
-import natSystem.BAN.file.File;
+import natSystem.BAN.tools.file.File;
+
 
 @SpringBootApplication
 public class BanApplication {
@@ -29,6 +30,15 @@ public class BanApplication {
 			logs.write("============================ Debuts logs ============================");
 			
 			Scanner scanner = new Scanner(System.in);
+			
+			File csvFile = new File();
+			do {
+				System.out.println("Chemin du fichier csv : ");
+				String cheminFichierCsv = scanner.nextLine().trim();
+				csvFile.setFileName(cheminFichierCsv);
+			}while (!csvFile.isCSVExisting() || csvFile.getFileName().isEmpty());
+			
+			
 			System.out.print("Code postal (laisser vide pour ignorer) : ");
 			String codePostalInput = scanner.nextLine().trim();
 			System.out.print("Code INSEE (laisser vide pour ignorer) : ");
@@ -36,9 +46,12 @@ public class BanApplication {
 			
 			LocalDateTime start = LocalDateTime.now();
 			logs.write("Date : " + start);
+			logs.write("Fichier : " + csvFile.getFileName());
+			logs.write("Filtre : [Code postal : " + codePostalInput + "] | [Code insee: " + codeInseeInput+ "]");
 			
 			JobParametersBuilder builder = new JobParametersBuilder()
-					.addLong("startAt", System.currentTimeMillis());
+					.addLong("startAt", System.currentTimeMillis())
+					.addString("cheminFichierCsv", csvFile.getFileName());
 
 			if (!codePostalInput.isEmpty()) {
 				try {
@@ -58,7 +71,6 @@ public class BanApplication {
 			JobParameters params = builder.toJobParameters();
 			launcher.run(banBatchJob, params);
 
-		
 			
 			LocalDateTime end = LocalDateTime.now();
 			Duration duree = Duration.between(start, end);
