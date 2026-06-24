@@ -1,6 +1,8 @@
 package natSystem.BAN.batch.validator;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
@@ -14,7 +16,7 @@ import natSystem.BAN.file.File;
 public class RowValidator implements Validator<Ban> {
 	private static final Pattern ID_PATTERN = Pattern.compile("^\\d{5}_[a-zA-Z0-9]{4,6}_\\d{5}(_.+)?$");
 	
-	private final Set<String> idsVus = new HashSet<>();
+	private final Map<String, Ban> bansVus = new HashMap<>();
 
 	@Override
 	public void validate(Ban ban) throws ValidationException {
@@ -29,9 +31,18 @@ public class RowValidator implements Validator<Ban> {
 	        throw new ValidationException("Format d'id invalide : " + ban.getId());
 	    }
 		
-		if (!idsVus.add(ban.getId())) {
-            logs.write("Doublon détecté, ligne ignorée (id : " + ban.getId() + ")");
-            throw new ValidationException("Doublon détecté (id : " + ban.getId() + ")");
+		
+		Ban existant = bansVus.get(ban.getId());
+        if (existant != null) {
+        	if (existant.equals(ban)) {
+                logs.write("Doublon exact détecté, ligne ignorée (id : " + ban.getId() + ")");
+                throw new ValidationException("Doublon exact détecté (id : " + ban.getId() + ")");
+            } else {
+                logs.write("Doublon avec valeurs différentes détecté (id : " + ban.getId() + ") " + ban.compareValue(existant));
+                throw new ValidationException("Doublon avec conflit de valeurs détecté (id : " + ban.getId() + ")");
+            }
+        } else {
+        	bansVus.put(ban.getId(), ban);
         }
 		
 		if (ban.getNumero() < 0) {

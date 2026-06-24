@@ -1,11 +1,16 @@
 package natSystem.BAN.entity;
 
+import java.util.Objects;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 
 @Entity
@@ -135,7 +140,64 @@ public class Ban {
 	public void setLat(double lat) {
 		this.lat = lat;
 	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(Integer.valueOf(codeInsee), Integer.valueOf(codePostal), id, Double.valueOf(lat),
+				Double.valueOf(lon), nomCommune, nomVoie, Integer.valueOf(numero), rep, Long.valueOf(x),
+				Long.valueOf(y));
+	}
+
 	
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Ban other = (Ban) obj;
+		return codeInsee == other.codeInsee && codePostal == other.codePostal && Objects.equals(id, other.id)
+				&& Double.doubleToLongBits(lat) == Double.doubleToLongBits(other.lat)
+				&& Double.doubleToLongBits(lon) == Double.doubleToLongBits(other.lon)
+				&& Objects.equals(nomCommune, other.nomCommune) && Objects.equals(nomVoie, other.nomVoie)
+				&& numero == other.numero && Objects.equals(rep, other.rep) && x == other.x && y == other.y;
+	}
 	
+	public String compareValue(Ban other) {
+		String diff = "";
+		if (numero != other.getNumero()) {
+			diff += "[Numero : " + numero + " | " + other.getNumero() + "] ";
+		}
+		if (!Objects.equals(rep, other.getRep())) {
+			diff += "[Rep : " + rep + " | " + other.getRep() + "] ";
+		}
+		if (!Objects.equals(nomVoie, other.getNomVoie())) {
+			diff += "[NomVoie : " + nomVoie + " | " + other.getNomVoie() + "] ";
+		}
+		if (codePostal!= other.getCodePostal()) {
+			diff += "[CodePostal : " + codePostal + " | " + other.getCodePostal() + "] ";
+		}
+		if (codeInsee != other.getCodeInsee()) {
+			diff += "[CodeInsee : " + codeInsee + " | " + other.getCodeInsee() + "] ";
+		}
+		if (!Objects.equals(nomCommune, other.getNomCommune())) {
+			diff += "[NomCommune : " + nomCommune + " | " + other.getNomCommune() + "] ";
+		}
+		if (x != other.getX()) {
+			diff += "[X : " + x + " | " + other.getX() + "] ";
+		}
+		if (y != other.getY()) {
+			diff += "[Y : " + y + " | " + other.getY() + "] ";
+		}
+		if (Double.doubleToLongBits(lon) != Double.doubleToLongBits(other.lon)) {
+			diff += "[Lon : " + lon + " | " + other.getLon() + "] ";
+		}
+		if (Double.doubleToLongBits(lat) != Double.doubleToLongBits(other.lat)) {
+			diff += "[Lat : " + lat + " | " + other.getLat() + "] ";
+		}
+		return diff;
+	}
 
 }
