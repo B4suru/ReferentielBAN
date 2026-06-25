@@ -1,9 +1,7 @@
 package natSystem.BAN.batch.validator;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 import java.util.regex.Pattern;
 
 import org.springframework.batch.infrastructure.item.validator.ValidationException;
