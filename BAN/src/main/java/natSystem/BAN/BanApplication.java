@@ -87,9 +87,12 @@ public class BanApplication {
 				do {
 					System.out.print("Voulez-vous traiter un autre fichier ? (y/n) : ");
 					res = scanner.nextLine().trim().toLowerCase();
-				} while (res != "y" || res != "n");
+				} while (!res.equals("y") && !res.equals("n"));
 
-				isNotFinished = res != "n";
+				if (res.equals("n")){
+					System.out.println("Fin de traitement des fichiers ...");
+					isNotFinished = false;
+				}
 				
 			} while (isNotFinished);
 			logs.write("============================  Fin logs   ============================");
