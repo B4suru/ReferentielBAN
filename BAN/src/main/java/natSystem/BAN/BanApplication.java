@@ -52,7 +52,7 @@ public class BanApplication {
 				logs.write("Date : " + start);
 				logs.write("Fichier : " + csvFile.getFileName());
 				logs.write("Filtre : [Code postal : " + codePostalInput + "] | [Code insee: " + codeInseeInput+ "]");
-				
+
 				JobParametersBuilder builder = new JobParametersBuilder()
 						.addLong("startAt", System.currentTimeMillis())
 						.addString("cheminFichierCsv", csvFile.getFileName());
@@ -91,7 +91,6 @@ public class BanApplication {
 					System.out.println("Fin de traitement des fichiers ...");
 					isNotFinished = false;
 				}
-				
 			} while (isNotFinished);
 			logs.write("============================  Fin logs   ============================");
 			

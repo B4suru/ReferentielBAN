@@ -4,6 +4,8 @@ import java.util.Arrays;
 
 import javax.sql.DataSource;
 
+import natSystem.BAN.BanApplication;
+import natSystem.BAN.batch.context.BanDiffContext;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.job.Job;
 import org.springframework.batch.core.job.builder.JobBuilder;
@@ -52,26 +54,25 @@ public class banBatchConfig {
 				.writer(writer)
 				.listener(listener)
 				.build();
-		
 	}
 	
 	@Bean
 	public CompositeItemProcessor<Ban, Ban> compositeProcessor(
 	        ValidatingItemProcessor<Ban> validatingProcessor,
-	        ItemProcessor<Ban, Ban> processor
+	        ItemProcessor<Ban, Ban> processorFilter,
+	        ItemProcessor<Ban, Ban> processorDiff
 	) {
 	    CompositeItemProcessor<Ban, Ban> composite = new CompositeItemProcessor<>();
-	    composite.setDelegates(Arrays.asList(validatingProcessor, processor));
+	    composite.setDelegates(Arrays.asList(validatingProcessor, processorFilter, processorDiff));
 	    return composite;
 	}
 	
 	@Bean
 	@StepScope
-	public ItemProcessor<Ban, Ban> processor(
+	public ItemProcessor<Ban, Ban> processorFilter(
 	        @Value("#{jobParameters['codePostal']}") Integer codePostal,
 	       @Value("#{jobParameters['codeInsee']}") Integer codeInsee
 	) {
-		
 	    return ban -> {
 	        if (codePostal == null && codeInsee == null) {
 	            return ban;
@@ -88,8 +89,21 @@ public class banBatchConfig {
 	        return match ? ban : null;
 	    };
 	}
-	
+
 	@Bean
+	@StepScope
+	public ItemProcessor<Ban, Ban> processorDiff(BanDiffContext banDiffContext) {
+		return ban -> {
+			if (banDiffContext.getBdIds().remove(ban.getId())) {
+				return null;
+			} else {
+				return ban;
+			}
+		};
+	}
+
+	@Bean
+	@StepScope
 	public ValidatingItemProcessor<Ban> validatingProcessor() {
 	    ValidatingItemProcessor<Ban> validator = new ValidatingItemProcessor<>(new RowValidator());
 	    validator.setFilter(true);
