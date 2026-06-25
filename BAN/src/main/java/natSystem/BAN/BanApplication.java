@@ -74,9 +74,7 @@ public class BanApplication {
 	
 				JobParameters params = builder.toJobParameters();
 				launcher.run(banBatchJob, params);
-			
-			
-			
+
 				LocalDateTime end = LocalDateTime.now();
 				Duration duree = Duration.between(start, end);
 				long minutes = duree.toMinutes();
