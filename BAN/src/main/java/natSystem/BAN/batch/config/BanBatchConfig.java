@@ -4,8 +4,8 @@ import java.util.Arrays;
 
 import javax.sql.DataSource;
 
-import natSystem.BAN.BanApplication;
 import natSystem.BAN.batch.context.BanDiffContext;
+import natSystem.BAN.tools.ParseTool;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.job.Job;
 import org.springframework.batch.core.job.builder.JobBuilder;
@@ -32,7 +32,7 @@ import natSystem.BAN.entity.Ban;
 
 
 @Configuration
-public class banBatchConfig {
+public class BanBatchConfig {
 	@Bean
 	public Job banBatchJob(JobRepository jobRepository, Step banStep) {
 		return new JobBuilder("banBatchJob", jobRepository)
@@ -47,7 +47,7 @@ public class banBatchConfig {
 			ItemWriter<Ban> writer,
 			BanStepListener listener) {
 		return new StepBuilder("banStep", jobRepository)
-				.<Ban, Ban>chunk(1000)
+				.<Ban, Ban>chunk(5000)
 				.transactionManager(txtManager)
 				.reader(csvReader)
 				.processor(compositeItemProcessor)
@@ -112,11 +112,10 @@ public class banBatchConfig {
 	
 	@Bean
 	@StepScope
-	public FlatFileItemReader<Ban> csvReader(
-			@Value("#{jobParameters['cheminFichierCsv']}") String cheminFichierCsv) {
+	public FlatFileItemReader<Ban> csvReader() {
 		return new FlatFileItemReaderBuilder<Ban>()
 			 .name("banCsvReader")
-			 .resource(new FileSystemResource(cheminFichierCsv))
+			 .resource(new FileSystemResource("csv_sorted.csv"))
 			 .delimited()
 			 .delimiter(";")
 			 .strict(false)
@@ -149,18 +148,21 @@ public class banBatchConfig {
 )
 			 .fieldSetMapper(fs -> {
 				    Ban b = new Ban();
+					ParseTool parseTool = new ParseTool();
+
 
 				    b.setId(fs.readString("id"));
-				    b.setNumero(fs.readInt("numero"));
+				    b.setNumero(parseTool.parseIntSafe(fs.readString("numero")));
 				    b.setRep(fs.readString("rep"));
 				    b.setNomVoie(fs.readString("nom_voie"));
-				    b.setCodePostal(fs.readInt("code_postal"));
-				    b.setCodeInsee(fs.readInt("code_insee"));
+				 	b.setCodePostal(parseTool.parseIntSafe(fs.readString("code_postal")));
+				 	b.setCodeInsee(parseTool.parseIntSafe(fs.readString("code_insee")));
 				    b.setNomCommune(fs.readString("nom_commune"));
-				    b.setX(fs.readLong("x"));
-				    b.setY(fs.readLong("y"));
-				    b.setLon(fs.readDouble("lon"));
-				    b.setLat(fs.readDouble("lat"));
+					b.setX(parseTool.parseDoubleSafe(fs.readString("x")));
+					b.setY(parseTool.parseDoubleSafe(fs.readString("y")));
+					b.setLon(parseTool.parseDoubleSafe(fs.readString("lon")));
+					b.setLat(parseTool.parseDoubleSafe(fs.readString("lat")));
+
 				    return b;})
 			 .linesToSkip(1)
 			 .build();

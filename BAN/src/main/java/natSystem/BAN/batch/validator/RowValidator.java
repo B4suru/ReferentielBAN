@@ -8,17 +8,16 @@ import org.springframework.batch.infrastructure.item.validator.ValidationExcepti
 import org.springframework.batch.infrastructure.item.validator.Validator;
 
 import natSystem.BAN.entity.Ban;
-import natSystem.BAN.tools.file.File;
+import natSystem.BAN.tools.FileManager;
 
 
 public class RowValidator implements Validator<Ban> {
 	private static final Pattern ID_PATTERN = Pattern.compile("^\\d{5}_[a-zA-Z0-9]{4,6}_\\d{5}(_.+)?$");
-	
-	private final Map<String, Ban> bansVus = new HashMap<>();
-	private final File logs;
+	private Ban dernierBan = null;
+	private final FileManager logs;
 
 	public RowValidator() {
-		this.logs = new File("Logs.txt");
+		this.logs = new FileManager("Logs.txt");
 	}
 
 	@Override
@@ -33,20 +32,18 @@ public class RowValidator implements Validator<Ban> {
 	        throw new ValidationException("Format d'id invalide : " + ban.getId());
 	    }
 
-		Ban existant = bansVus.get(ban.getId());
-        if (existant != null) {
-        	if (existant.equals(ban)) {
+		if (dernierBan != null && dernierBan.getId().equals(ban.getId())) {
+			if (dernierBan.equals(ban)) {
 				this.logs.write("Doublon exact détecté, ligne ignorée (id : " + ban.getId() + ")");
                 throw new ValidationException("Doublon exact détecté (id : " + ban.getId() + ")");
             } else {
-				this.logs.write("Doublon avec valeurs différentes détecté (id : " + ban.getId() + ") " + ban.compareValue(existant));
-                throw new ValidationException("Doublon avec conflit de valeurs détecté (id : " + ban.getId() + ")");
+				this.logs.write("Doublon avec valeurs différentes détecté (id : " + ban.getId() + ") " + ban.compareValue(dernierBan));
+				throw new ValidationException("Doublon avec conflit de valeurs détecté (id : " + ban.getId() + ")");
             }
-        } else {
-        	bansVus.put(ban.getId(), ban);
         }
-		
-		if (ban.getNumero() < 0) {
+		dernierBan = ban;
+
+		if (ban.getNumero() == null) {
 			this.logs.write("Le numero ne peux pas etre inférieur a 0 (id : " + ban.getId()+ ")");
 			throw new ValidationException("Le numero ne peux pas etre inférieur a 0 (id : " + ban.getId()+ ")");
 		}
@@ -55,13 +52,13 @@ public class RowValidator implements Validator<Ban> {
 			this.logs.write("Le nom de la voie ne peut pas être vide (id : " + ban.getId()+ ")");
 			throw new ValidationException("Le nom de la voie ne peut pas être vide (id : " + ban.getId()+ ")");
 		}
-		
-		if (ban.getCodePostal() <= 0) {
+
+		if (ban.getCodePostal() == null) {
 			this.logs.write("Le code postal est obligatoire (id : " + ban.getId()+ ")");
             throw new ValidationException("Le code postal est obligatoire (id : " + ban.getId()+ ")");
         }
-		
-		if (ban.getCodeInsee() <= 0) {
+
+		if (ban.getCodeInsee() == null) {
 			this.logs.write("Le code insee est obligatoire (id : " + ban.getId()+ ")");
             throw new ValidationException("Le code insee est obligatoire (id : " + ban.getId()+ ")");
         }
@@ -71,14 +68,24 @@ public class RowValidator implements Validator<Ban> {
 			throw new ValidationException("Le nom de la commune ne peut pas être vide (id : " + ban.getId()+ ")");
 		}
 		
-		if (ban.getX() <= 0) {
+		if (ban.getX() == 0.0) {
 			this.logs.write("La position X est obligatoire (id : " + ban.getId()+ ")");
 			throw new ValidationException("La position X est obligatoire (id : " + ban.getId()+ ")");
 		}
 		
-		if (ban.getY() <= 0) {
+		if (ban.getY() == 0.0) {
 			this.logs.write("La position Y est obligatoire (id : " + ban.getId()+ ")");
 			throw new ValidationException("La position Y est obligatoire (id : " + ban.getId()+ ")");
+		}
+
+		if (ban.getLon() == 0.0){
+			this.logs.write("La longitude est obligatoire (id : " + ban.getId()+ ")");
+			throw new ValidationException("La longitude est obligatoire (id : " + ban.getId()+ ")");
+		}
+
+		if (ban.getLat() == 0.0){
+			this.logs.write("La latitude est obligatoire (id : " + ban.getId()+ ")");
+			throw new ValidationException("La latitude est obligatoire (id : " + ban.getId()+ ")");
 		}
 	}
 }

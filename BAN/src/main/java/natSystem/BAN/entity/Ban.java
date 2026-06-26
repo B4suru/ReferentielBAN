@@ -6,14 +6,14 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 
 @Entity
 @Table(name = "ban")
 @AllArgsConstructor
 @NoArgsConstructor
+@Getter
+@Setter
 @ToString
 public class Ban {
 	@Id
@@ -21,7 +21,7 @@ public class Ban {
     private String id;
 	
 	@Column(name = "numero")
-    private int numero;
+    private Integer numero;
     
 	@Column(name = "rep")
     private String rep;
@@ -30,19 +30,19 @@ public class Ban {
     private String nomVoie;
     
 	@Column(name = "code_postal")
-    private int codePostal;
+    private Integer codePostal;
 
 	@Column(name = "code_insee")
-    private int codeInsee;
+    private Integer codeInsee;
 
 	@Column(name = "nom_commune")
     private String nomCommune;
     
 	@Column(name = "x")
-    private long x;
+    private double x;
     
 	@Column(name = "y")
-    private long y;
+    private double y;
 
 	@Column(name = "lon")
     private double lon;
@@ -50,102 +50,6 @@ public class Ban {
 	@Column(name = "lat")
     private double lat;
 
-	public String getId() {
-		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
-	}
-
-	public int getNumero() {
-		return numero;
-	}
-
-	public void setNumero(int numero) {
-		this.numero = numero;
-	}
-
-	public String getRep() {
-		return rep;
-	}
-
-	public void setRep(String rep) {
-		this.rep = rep;
-	}
-
-	public String getNomVoie() {
-		return nomVoie;
-	}
-
-	public void setNomVoie(String nomVoie) {
-		this.nomVoie = nomVoie;
-	}
-
-	public int getCodePostal() {
-		return codePostal;
-	}
-
-	public void setCodePostal(int codePostal) {
-		this.codePostal = codePostal;
-	}
-
-	public int getCodeInsee() {
-		return codeInsee;
-	}
-
-	public void setCodeInsee(int codeInsee) {
-		this.codeInsee = codeInsee;
-	}
-
-	public String getNomCommune() {
-		return nomCommune;
-	}
-
-	public void setNomCommune(String nomCommune) {
-		this.nomCommune = nomCommune;
-	}
-
-	public long getX() {
-		return x;
-	}
-
-	public void setX(long x) {
-		this.x = x;
-	}
-
-	public long getY() {
-		return y;
-	}
-
-	public void setY(long y) {
-		this.y = y;
-	}
-
-	public double getLon() {
-		return lon;
-	}
-
-	public void setLon(double lon) {
-		this.lon = lon;
-	}
-
-	public double getLat() {
-		return lat;
-	}
-
-	public void setLat(double lat) {
-		this.lat = lat;
-	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hash(Integer.valueOf(codeInsee), Integer.valueOf(codePostal), id, Double.valueOf(lat),
-				Double.valueOf(lon), nomCommune, nomVoie, Integer.valueOf(numero), rep, Long.valueOf(x),
-				Long.valueOf(y));
-	}
-
-	
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -155,16 +59,18 @@ public class Ban {
 		if (getClass() != obj.getClass())
 			return false;
 		Ban other = (Ban) obj;
-		return codeInsee == other.codeInsee && codePostal == other.codePostal && Objects.equals(id, other.id)
+		return codeInsee.equals(other.codeInsee)  && codePostal.equals(other.codePostal) && Objects.equals(id, other.id)
 				&& Double.doubleToLongBits(lat) == Double.doubleToLongBits(other.lat)
 				&& Double.doubleToLongBits(lon) == Double.doubleToLongBits(other.lon)
 				&& Objects.equals(nomCommune, other.nomCommune) && Objects.equals(nomVoie, other.nomVoie)
-				&& numero == other.numero && Objects.equals(rep, other.rep) && x == other.x && y == other.y;
+				&& numero.equals(other.numero) && Objects.equals(rep, other.rep)
+				&& Double.doubleToLongBits(x) == Double.doubleToLongBits(other.x)
+				&& Double.doubleToLongBits(y) == Double.doubleToLongBits(other.y);
 	}
-	
+
 	public String compareValue(Ban other) {
 		String diff = "";
-		if (numero != other.getNumero()) {
+		if (!numero.equals(other.getNumero())) {
 			diff += "[Numero : " + numero + " | " + other.getNumero() + "] ";
 		}
 		if (!Objects.equals(rep, other.getRep())) {
@@ -173,19 +79,19 @@ public class Ban {
 		if (!Objects.equals(nomVoie, other.getNomVoie())) {
 			diff += "[NomVoie : " + nomVoie + " | " + other.getNomVoie() + "] ";
 		}
-		if (codePostal!= other.getCodePostal()) {
+		if (!codePostal.equals(other.getCodePostal())) {
 			diff += "[CodePostal : " + codePostal + " | " + other.getCodePostal() + "] ";
 		}
-		if (codeInsee != other.getCodeInsee()) {
+		if (codeInsee.equals(other.getCodeInsee())) {
 			diff += "[CodeInsee : " + codeInsee + " | " + other.getCodeInsee() + "] ";
 		}
 		if (!Objects.equals(nomCommune, other.getNomCommune())) {
 			diff += "[NomCommune : " + nomCommune + " | " + other.getNomCommune() + "] ";
 		}
-		if (x != other.getX()) {
+		if (Double.doubleToLongBits(x) != Double.doubleToLongBits(other.getX())) {
 			diff += "[X : " + x + " | " + other.getX() + "] ";
 		}
-		if (y != other.getY()) {
+		if (Double.doubleToLongBits(y) != Double.doubleToLongBits(other.getY())) {
 			diff += "[Y : " + y + " | " + other.getY() + "] ";
 		}
 		if (Double.doubleToLongBits(lon) != Double.doubleToLongBits(other.lon)) {
@@ -196,5 +102,4 @@ public class Ban {
 		}
 		return diff;
 	}
-
 }
