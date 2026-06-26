@@ -4,6 +4,8 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Scanner;
 
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.info.Info;
 import org.springframework.batch.core.job.Job;
 import org.springframework.batch.core.job.parameters.JobParameters;
 import org.springframework.batch.core.job.parameters.JobParametersBuilder;
@@ -15,7 +17,13 @@ import org.springframework.context.annotation.Bean;
 
 import natSystem.BAN.tools.file.File;
 
-
+@OpenAPIDefinition(
+		info = @Info(
+				title = "Ban api",
+				version = "1.0",
+				description = "API documentation pour référentiel BAN"
+		)
+)
 @SpringBootApplication
 public class BanApplication {
 
@@ -73,7 +81,7 @@ public class BanApplication {
 				}
 	
 				JobParameters params = builder.toJobParameters();
-				launcher.run(banBatchJob, params);
+				launcher.start(banBatchJob, params);
 
 				LocalDateTime end = LocalDateTime.now();
 				Duration duree = Duration.between(start, end);

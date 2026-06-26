@@ -1,9 +1,15 @@
 package natSystem.BAN.tools.file;
 
+
+import com.google.code.externalsorting.ExternalSort;
+import com.google.code.externalsorting.csv.CsvExternalSort;
+
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Comparator;
+import java.util.List;
 
 
 public class File {
@@ -45,5 +51,12 @@ public class File {
 		}
 		return Files.isRegularFile(chemin) && chemin.getFileName().toString().toLowerCase().endsWith(".csv");
 	}
-	
+
+	/*public void sortingCSV() {
+		File input = new File(fileName);
+		File output = new File("csv_sorted.csv");
+		Comparator<String> comparator = Comparator.naturalOrder();
+		List<File> tmp = ExternalSort.sortInBatch(input);
+		ExternalSort.mergeSortedFiles(tmp, output, comparator);
+	}*/
 }
