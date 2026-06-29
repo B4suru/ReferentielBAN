@@ -1,6 +1,10 @@
 HELP.md
 BAN.db
 Logs.txt
+csv_sorted.csv
+BAN/src/main/resources/adresses-79.csv
+BAN/src/main/resources/adresses-79(2).csv
+
 target/
 .mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/

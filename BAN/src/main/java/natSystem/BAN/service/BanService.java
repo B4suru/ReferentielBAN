@@ -24,4 +24,8 @@ public class BanService {
     public List<Ban> searchByCommune(String commune) {
         return repo.findByNomCommuneContainingIgnoreCase(commune);
     }
+
+    public List<Ban> search(Integer cp, String rue, String commune) {
+        return repo.rechercher(cp, rue,commune);
+    }
 }

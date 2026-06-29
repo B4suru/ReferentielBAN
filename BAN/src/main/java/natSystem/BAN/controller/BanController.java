@@ -22,12 +22,19 @@ public class BanController {
     public List<Ban> byCodePostal(@RequestParam int codePostal) {
         return banService.searchByCodePostal(codePostal);
     }
+
     @GetMapping("/rue")
     public List<Ban> byRue(@RequestParam String rue) {
         return banService.searchByRue(rue);
     }
+
     @GetMapping("/commune")
     public List<Ban> byCommune(@RequestParam String commune) {
         return banService.searchByCommune(commune);
+    }
+
+    @GetMapping("/search")
+    public List<Ban> search(@RequestParam(required = false) Integer codePostal, @RequestParam(required = false) String rue, @RequestParam(required = false) String commune){
+        return banService.search(codePostal, rue, commune);
     }
 }

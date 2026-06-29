@@ -7,6 +7,7 @@ import java.util.Scanner;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Info;
 import lombok.extern.slf4j.Slf4j;
+import natSystem.BAN.tools.ScannerTool;
 import org.springframework.batch.core.job.Job;
 import org.springframework.batch.core.job.parameters.JobParameters;
 import org.springframework.batch.core.job.parameters.JobParametersBuilder;
@@ -37,24 +38,30 @@ public class BanApplication {
 		return args -> {
 			FileManager logs = new FileManager("Logs.txt");
 			logs.write("============================ Debuts logs ============================");
-			Scanner scanner = new Scanner(System.in);
+			ScannerTool scanner = new ScannerTool();
+
 			boolean isNotFinished = true;
-			
 			do {
 				//Recuperation du fichier csv
 				FileManager csvFile = new FileManager();
 				do {
-					System.out.println("Chemin du fichier csv : ");
-					String cheminFichierCsv = scanner.nextLine().trim();
+					String cheminFichierCsv = scanner.getString("Chemin du fichier csv : ");
 					csvFile.setFileName(cheminFichierCsv);
 				} while (!csvFile.isCSVExisting() || csvFile.getFileName().isEmpty());
 
 				//Récuperation des filtres
-				System.out.print("Code postal (laisser vide pour ignorer) : ");
-				String codePostalInput = scanner.nextLine().trim();
-				System.out.print("Code INSEE (laisser vide pour ignorer) : ");
-				String codeInseeInput = scanner.nextLine().trim();
+				Long codePostalInput = scanner.getLong("Code postal (laisser vide pour ignorer) : ");
+				Long codeInseeInput = scanner.getLong("Code INSEE (laisser vide pour ignorer) : ");
 
+				//Début timer traitement
+				LocalDateTime start = LocalDateTime.now();
+				logs.write("Date : " + start);
+				logs.write("Fichier : " + csvFile.getFileName());
+				logs.write("Filtre : [Code postal : " + codePostalInput + "] | [Code insee: " + codeInseeInput+ "]");
+
+
+				//Récuperation de la taille du csv
+				long sizeCSV = csvFile.countFileLine();
 
 				//Tri du fichier csv
 				LocalDateTime startSort = LocalDateTime.now();
@@ -66,30 +73,15 @@ public class BanApplication {
 				log.info("Temps tri csv : " + minutesSort + " min "+ secondesSort+" sec");
 				logs.write(String.format("Temps tri csv : %d min %d sec", minutesSort, secondesSort));
 
-
-				//Début timer traitement
-				LocalDateTime start = LocalDateTime.now();
-				logs.write("Date : " + start);
-				logs.write("Fichier : " + csvFile.getFileName());
-				logs.write("Filtre : [Code postal : " + codePostalInput + "] | [Code insee: " + codeInseeInput+ "]");
-
-
 				//Creation des paramètres et lancement du job
 				JobParametersBuilder builder = new JobParametersBuilder()
-						.addLong("startAt", System.currentTimeMillis());
-				if (!codePostalInput.isEmpty()) {
-					try {
-						builder.addLong("codePostal", Long.parseLong(codePostalInput));
-					} catch (NumberFormatException e) {
-						System.err.println("Code postal invalide, ignoré.");
-					}
+						.addLong("startAt", System.currentTimeMillis())
+						.addLong("sizeCSV", sizeCSV);
+				if (codePostalInput != null) {
+					builder.addLong("codePostal", codePostalInput);
 				}
-				if (!codeInseeInput.isEmpty()) {
-					try {
-						builder.addLong("codeInsee", Long.parseLong(codeInseeInput));
-					} catch (NumberFormatException e) {
-						System.err.println("Code INSEE invalide, ignoré.");
-					}
+				if (codeInseeInput != null) {
+					builder.addLong("codeInsee", codeInseeInput);
 				}
 				JobParameters params = builder.toJobParameters();
 				launcher.start(banBatchJob, params);
@@ -100,13 +92,12 @@ public class BanApplication {
 				Duration duree = Duration.between(start, end);
 				long minutes = duree.toMinutes();
 				long secondes = duree.minusMinutes(minutes).getSeconds();
-				logs.write(String.format("Durée insertion : %d min %d sec", minutes, secondes));
+				logs.write(String.format("Durée insertion  : %d min %d sec", minutes, secondes));
 
 				//Demande a l'utilisateur si il a d'autre traitement a faire
 				String res;
 				do {
-					System.out.print("Voulez-vous traiter un autre fichier ? (y/n) : ");
-					res = scanner.nextLine().trim().toLowerCase();
+					res = scanner.getString("Voulez-vous traiter un autre fichier ? (y/n) : ").toLowerCase();
 				} while (!res.equals("y") && !res.equals("n"));
 				if (res.equals("n")){
 					System.out.println("Fin de traitement des fichiers ...");

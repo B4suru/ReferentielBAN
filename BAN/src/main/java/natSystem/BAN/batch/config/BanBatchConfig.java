@@ -4,11 +4,14 @@ import java.util.Arrays;
 
 import javax.sql.DataSource;
 
+import lombok.extern.slf4j.Slf4j;
 import natSystem.BAN.batch.context.BanDiffContext;
 import natSystem.BAN.tools.ParseTool;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.job.Job;
 import org.springframework.batch.core.job.builder.JobBuilder;
+import org.springframework.batch.core.partition.PartitionHandler;
+import org.springframework.batch.core.partition.support.TaskExecutorPartitionHandler;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.Step;
 import org.springframework.batch.core.step.builder.StepBuilder;
@@ -24,13 +27,17 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.task.AsyncTaskExecutor;
+import org.springframework.core.task.TaskExecutor;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.transaction.PlatformTransactionManager;
 
-import natSystem.BAN.batch.stepListener.BanStepListener;
+import natSystem.BAN.batch.listener.BanStepListener;
 import natSystem.BAN.batch.validator.RowValidator;
 import natSystem.BAN.entity.Ban;
 
 
+@Slf4j
 @Configuration
 public class BanBatchConfig {
 	@Bean
@@ -42,12 +49,12 @@ public class BanBatchConfig {
 	
 	@Bean
 	public Step banStep(JobRepository jobRepository, PlatformTransactionManager txtManager,
-			FlatFileItemReader<Ban> csvReader,
-			CompositeItemProcessor<Ban, Ban> compositeItemProcessor,
-			ItemWriter<Ban> writer,
-			BanStepListener listener) {
+	                    FlatFileItemReader<Ban> csvReader,
+	                    CompositeItemProcessor<Ban, Ban> compositeItemProcessor,
+	                    ItemWriter<Ban> writer,
+	                    BanStepListener listener) {
 		return new StepBuilder("banStep", jobRepository)
-				.<Ban, Ban>chunk(5000)
+				.<Ban, Ban>chunk(10000)
 				.transactionManager(txtManager)
 				.reader(csvReader)
 				.processor(compositeItemProcessor)
@@ -71,7 +78,7 @@ public class BanBatchConfig {
 	@StepScope
 	public ItemProcessor<Ban, Ban> processorFilter(
 	        @Value("#{jobParameters['codePostal']}") Integer codePostal,
-	       @Value("#{jobParameters['codeInsee']}") Integer codeInsee
+	        @Value("#{jobParameters['codeInsee']}") Integer codeInsee
 	) {
 	    return ban -> {
 	        if (codePostal == null && codeInsee == null) {
@@ -203,5 +210,4 @@ public class BanBatchConfig {
 	 .beanMapped()
 	 .build();
 	}
-
 }

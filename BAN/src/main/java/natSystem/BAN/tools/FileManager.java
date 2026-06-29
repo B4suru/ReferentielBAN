@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -16,6 +17,7 @@ import java.nio.file.Path;
 import java.util.Comparator;
 import java.util.List;
 
+@Slf4j
 @Getter
 @Setter
 @NoArgsConstructor
@@ -76,15 +78,18 @@ public class FileManager {
 		}
 	}
 
-	/*public long countFileLine() {
+	public long countFileLine() {
 		long count = 0;
 		Path path = Path.of(fileName);
-		try (BufferedReader reader = Files.newBufferedReader(path) {
+		try (BufferedReader reader = Files.newBufferedReader(path)) {
 			while (reader.readLine() != null) {
 				count++;
 			}
+			log.info("Nombre de ligne : " + count);
+		} catch (IOException e){
+			System.err.println("Erreur lors du comptage du nombre de ligne du fichier");
 		}
 
 		return count;
-	}*/
+	}
 }
