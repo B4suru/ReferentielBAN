@@ -54,7 +54,7 @@ public class BanBatchConfig {
 	                    ItemWriter<Ban> writer,
 	                    BanStepListener listener) {
 		return new StepBuilder("banStep", jobRepository)
-				.<Ban, Ban>chunk(10000)
+				.<Ban, Ban>chunk(1000)
 				.transactionManager(txtManager)
 				.reader(csvReader)
 				.processor(compositeItemProcessor)
