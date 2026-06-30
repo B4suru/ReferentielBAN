@@ -5,13 +5,11 @@ Application de traitement et d'import de la Base Adresse Nationale (BAN) à part
 ## Étape 1 — Cloner le projet
 
 ```bash
-git clone 
+git clone https://github.com/B4suru/ReferentielBAN.git
 cd ReferentielBAN
 ```
 
 ## Étape 2 — Lancer le projet
-
-Le projet doit d'abord être compilé (voir section Build), puis exécuté avec la commande suivante :
 
 ```bash
 java -jar BAN-0.0.1-SNAPSHOT.jar
