@@ -1,3 +1,8 @@
+PRAGMA journal_mode = WAL;
+PRAGMA synchronous = NORMAL;
+PRAGMA cache_size = -3000000;
+PRAGMA temp_store = MEMORY;
+
 DROP TABLE IF EXISTS ban;
 
 CREATE TABLE ban (
@@ -8,8 +13,8 @@ CREATE TABLE ban (
     code_postal INTEGER, 
     code_insee INTEGER,
     nom_commune TEXT,
-    x INTEGER,
-    y INTEGER,
+    x REAL,
+    y REAL,
     lon REAL,
     lat REAL
 );

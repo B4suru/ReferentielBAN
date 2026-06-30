@@ -3,6 +3,7 @@ package natSystem.BAN.batch.listener;
 import lombok.extern.slf4j.Slf4j;
 import natSystem.BAN.batch.context.BanDiffContext;
 import natSystem.BAN.entity.Ban;
+import natSystem.BAN.tools.TimerTool;
 import org.springframework.batch.core.listener.ChunkListener;
 import org.springframework.batch.core.listener.StepExecutionListener;
 import org.springframework.batch.core.ExitStatus;
@@ -33,7 +34,8 @@ public class BanStepListener implements StepExecutionListener, ChunkListener<Ban
     public ExitStatus afterStep(StepExecution stepExecution) {
         System.out.println("Traitement fini : 100%");
 
-        FileManager logs = new FileManager("Logs.txt");
+        //TODO : mettre ca dans un batch (ca fonctionne bien sur un petit fichier ex:79 mais bcp trop long sur toutes la france)
+        FileManager logs = new FileManager(stepExecution.getJobParameters().getString("logFileName"));
         int del = 0;
         for (String id : banDiffContext.getBdIds()) {
             jdbc.update("DELETE FROM ban WHERE id = ?", id);
@@ -45,14 +47,15 @@ public class BanStepListener implements StepExecutionListener, ChunkListener<Ban
         logs.write("Lignes filtrées  : " + stepExecution.getFilterCount());
         logs.write("Lignes supprimé  : " + del);
 
+        logs.close();
         return stepExecution.getExitStatus();
     }
     public void afterChunk(Chunk chunk) {
-
         long totalLignes = stepExecution.getJobParameters().getLong("sizeCSV");
         long traitees = stepExecution.getReadCount();
+        TimerTool timerStep = new TimerTool(stepExecution.getStartTime());
         int pourcentage = (int) ((traitees * 100) / totalLignes);
-        System.out.print("\rTraitement en cours : " + pourcentage + "% ( " + traitees + " / " + totalLignes + " )");
+        System.out.print("\rTraitement en cours : " + pourcentage + "% ( " + traitees + " / " + totalLignes + " ) " + timerStep.showTimer());
     }
 
 }

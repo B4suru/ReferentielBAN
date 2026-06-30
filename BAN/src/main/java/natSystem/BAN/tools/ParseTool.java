@@ -1,5 +1,9 @@
 package natSystem.BAN.tools;
 
+/**
+ * Outil fournissant des méthodes de conversion sécurisée de chaînes de
+ * caractères vers des types numériques.
+ */
 public class ParseTool {
     public Integer parseIntSafe(String v) {
         if (v == null || v.isBlank()) return null;

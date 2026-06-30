@@ -11,6 +11,7 @@
 	<groupId>natSystem</groupId>
 	<artifactId>BAN</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
+	<packaging>jar</packaging>
 	<name/>
 	<description/>
 	<url/>
@@ -130,5 +131,4 @@
 			</plugin>
 		</plugins>
 	</build>
-
 </project>

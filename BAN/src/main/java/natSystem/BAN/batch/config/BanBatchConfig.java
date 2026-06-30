@@ -54,7 +54,7 @@ public class BanBatchConfig {
 	                    ItemWriter<Ban> writer,
 	                    BanStepListener listener) {
 		return new StepBuilder("banStep", jobRepository)
-				.<Ban, Ban>chunk(1000)
+				.<Ban, Ban>chunk(5000)
 				.transactionManager(txtManager)
 				.reader(csvReader)
 				.processor(compositeItemProcessor)
@@ -111,8 +111,9 @@ public class BanBatchConfig {
 
 	@Bean
 	@StepScope
-	public ValidatingItemProcessor<Ban> validatingProcessor() {
-	    ValidatingItemProcessor<Ban> validator = new ValidatingItemProcessor<>(new RowValidator());
+	public ValidatingItemProcessor<Ban> validatingProcessor( @Value("#{jobParameters['logFileName']}") String logFileName)
+	{
+	    ValidatingItemProcessor<Ban> validator = new ValidatingItemProcessor<>(new RowValidator(logFileName));
 	    validator.setFilter(true);
 	    return validator;
 	}

@@ -17,6 +17,10 @@ import java.nio.file.Path;
 import java.util.Comparator;
 import java.util.List;
 
+/**
+ * Outil de gestion de fichiers permettant l'écriture, la vérification,
+ * le tri et le comptage de lignes de fichiers CSV.
+ */
 @Slf4j
 @Getter
 @Setter
@@ -50,12 +54,12 @@ public class FileManager {
 			System.err.println("Erreur fermeture : " + e.getMessage());
 		}
 	}
-	
+
 	public boolean isCSVExisting() {
 		Path chemin = Path.of(fileName);
 		if (!Files.isRegularFile(chemin)
 		        || !chemin.getFileName().toString().toLowerCase().endsWith(".csv")) {
-		    System.out.println("Ce n'est pas un fichier CSV.");
+		    System.err.println("Ce n'est pas un fichier CSV.");
 		}
 		return Files.isRegularFile(chemin) && chemin.getFileName().toString().toLowerCase().endsWith(".csv");
 	}
@@ -89,7 +93,6 @@ public class FileManager {
 		} catch (IOException e){
 			System.err.println("Erreur lors du comptage du nombre de ligne du fichier");
 		}
-
 		return count;
 	}
 }

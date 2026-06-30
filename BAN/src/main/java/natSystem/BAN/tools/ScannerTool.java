@@ -3,9 +3,14 @@ package natSystem.BAN.tools;
 
 import java.util.Scanner;
 
+/**
+ * Outil facilitant la lecture des entrées utilisateur depuis la console.
+ * Cette classe fournit des méthodes
+ * permettant de récupérer des chaînes de caractères ou des nombres de
+ * manière sécurisée.
+ */
 public class ScannerTool {
     private Scanner scanner;
-
 
     public ScannerTool() {
         this.scanner = new Scanner(System.in);

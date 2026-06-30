@@ -16,8 +16,8 @@ public class RowValidator implements Validator<Ban> {
 	private Ban dernierBan = null;
 	private final FileManager logs;
 
-	public RowValidator() {
-		this.logs = new FileManager("Logs.txt");
+	public RowValidator(String logFileName) {
+		this.logs = new FileManager(logFileName);
 	}
 
 	@Override
