@@ -21,12 +21,24 @@ mvn clean install -DskipTests
 ```
 
 ## Étape 3 — Lancer le projet
+Deux bases de données sont disponibles :
 
-Le projet doit d'abord être compilé, puis exécuté avec la commande suivante :
-
+**SQLite** (base locale, aucune configuration requise) :
 ```bash
 java -jar .\target\BAN-0.0.1-SNAPSHOT.jar
 ```
+
+**Supabase** (base PostgreSQL distante) :
+```bash
+java -jar .\target\BAN-0.0.1-SNAPSHOT.jar --spring.profiles.active=supabase
+```
+
+> **Note Supabase :** Avant de lancer, renseignez vos identifiants de connexion dans le fichier `src/main/resources/application-supabase.properties` (Fichier à créer) :
+> ```properties
+> spring.datasource.url=jdbc:postgresql://<host>:5432/postgres
+> spring.datasource.username=<username>
+> spring.datasource.password=<password>
+> ```
 
 Une fois lancé, l'application vous demandera :
 1. Le chemin du fichier CSV à traiter
@@ -50,3 +62,4 @@ http://localhost:8080/swagger-ui.html
 ## Logs
 
 Un dossier `Logs/` est créé à la racine du projet. Chaque exécution génère un fichier de log horodaté (`Logs(yyyy-MM-dd'T'HH-mm-ss.SSS).txt`) contenant le détail de chaque traitement (fichier traité, filtres appliqués, durée, lignes lues/écrites/filtrées/supprimées).
+Le chemin du fichier est affiché a la fin du traitement des fichiers.
