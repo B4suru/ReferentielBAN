@@ -97,4 +97,9 @@ public class FileManager {
 		}
 		return count;
 	}
+
+	public String getAbsolutePath() {
+		Path path = Path.of(fileName);
+		return path.toAbsolutePath().toString();
+	}
 }

@@ -1,7 +1,7 @@
-PRAGMA journal_mode = WAL;
-PRAGMA synchronous = NORMAL;
-PRAGMA cache_size = -3000000;
-PRAGMA temp_store = MEMORY;
+--PRAGMA journal_mode = WAL;
+--PRAGMA synchronous = NORMAL;
+--PRAGMA cache_size = -3000000;
+--PRAGMA temp_store = MEMORY;
 
 DROP TABLE IF EXISTS ban;
 
@@ -17,4 +17,8 @@ CREATE TABLE ban (
     y REAL,
     lon REAL,
     lat REAL
+    --x DOUBLE PRECISION,
+    --y DOUBLE PRECISION,
+    --lon DOUBLE PRECISION,
+    --lat DOUBLE PRECISION
 );

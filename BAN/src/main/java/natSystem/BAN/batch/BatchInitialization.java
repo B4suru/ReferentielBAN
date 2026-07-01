@@ -45,6 +45,7 @@ public class BatchInitialization {
             } while (isNotFinished);
             logs.write("============================  Fin logs   ============================");
 
+            log.info("Chemin du fichier de logs : " + logs.getAbsolutePath());
             logs.close();
             scanner.close();
             log.info("-- Fin du programme --");
