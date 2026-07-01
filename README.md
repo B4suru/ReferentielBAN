@@ -35,15 +35,6 @@ Une fois lancé, l'application vous demandera :
 
 Vous pourrez ensuite enchaîner le traitement de plusieurs fichiers à la suite.
 
-> **Remarque sur le chemin du fichier CSV**
-> Le chemin doit être **absolu**. Vous pouvez l'obtenir en faisant `Ctrl + Maj + C` sur le fichier dans l'explorateur Windows, ou clic droit → "Copier en tant que chemin d'accès".
-> Si le chemin copié est entouré de guillemets (`"..."`), il faut les retirer avant de le coller :
->
-> ```
-> "C:\Users\...\...\fichier.csv"   à corriger
-> C:\Users\...\...\fichier.csv     correct
-> ```
-
 Une fois le traitement des fichiers terminé (réponse `n` à la question "Voulez-vous traiter un autre fichier ?"), l'**API reste active** et continue de tourner dans le terminal — c'est normal, elle reste disponible pour être interrogée (voir section API ci-dessous).
  
 Pour **arrêter l'application**, retournez dans le terminal et faites `Ctrl + C`.

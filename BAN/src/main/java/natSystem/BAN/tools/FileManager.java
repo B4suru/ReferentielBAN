@@ -85,11 +85,13 @@ public class FileManager {
 	public long countFileLine() {
 		long count = 0;
 		Path path = Path.of(fileName);
+		TimerTool timer = new TimerTool();
 		try (BufferedReader reader = Files.newBufferedReader(path)) {
 			while (reader.readLine() != null) {
 				count++;
 			}
 			log.info("Nombre de ligne : " + count);
+			log.info("Temps passer a connaitre le nombre de ligne : " + timer.showTimer());
 		} catch (IOException e){
 			System.err.println("Erreur lors du comptage du nombre de ligne du fichier");
 		}

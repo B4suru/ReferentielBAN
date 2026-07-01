@@ -18,14 +18,14 @@ import lombok.*;
 public class Ban {
 	@Id
 	@Column(name = "id")
-    private String id;
-	
+	private String id;
+
 	@Column(name = "numero")
     private Integer numero;
-    
+
 	@Column(name = "rep")
     private String rep;
-    
+
 	@Column(name = "nom_voie")
     private String nomVoie;
     
@@ -82,7 +82,7 @@ public class Ban {
 		if (!codePostal.equals(other.getCodePostal())) {
 			diff += "[CodePostal : " + codePostal + " | " + other.getCodePostal() + "] ";
 		}
-		if (codeInsee.equals(other.getCodeInsee())) {
+		if (!codeInsee.equals(other.getCodeInsee())) {
 			diff += "[CodeInsee : " + codeInsee + " | " + other.getCodeInsee() + "] ";
 		}
 		if (!Objects.equals(nomCommune, other.getNomCommune())) {

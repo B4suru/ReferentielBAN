@@ -1,8 +1,8 @@
-package natSystem.BAN.service;
+package natSystem.BAN.api.service;
 
 import lombok.AllArgsConstructor;
 import natSystem.BAN.entity.Ban;
-import natSystem.BAN.repository.BanRepository;
+import natSystem.BAN.api.repository.BanRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

@@ -1,4 +1,4 @@
-package natSystem.BAN.repository;
+package natSystem.BAN.api.repository;
 
 import natSystem.BAN.entity.Ban;
 import org.springframework.data.jpa.repository.JpaRepository;

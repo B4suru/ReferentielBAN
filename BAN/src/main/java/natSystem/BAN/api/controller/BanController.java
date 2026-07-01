@@ -1,9 +1,8 @@
-package natSystem.BAN.controller;
+package natSystem.BAN.api.controller;
 
 import lombok.AllArgsConstructor;
 import natSystem.BAN.entity.Ban;
-import natSystem.BAN.repository.BanRepository;
-import natSystem.BAN.service.BanService;
+import natSystem.BAN.api.service.BanService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
