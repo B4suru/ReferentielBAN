@@ -28,7 +28,7 @@ public class Ban {
 
 	@Column(name = "nom_voie")
     private String nomVoie;
-    
+
 	@Column(name = "code_postal")
     private Integer codePostal;
 

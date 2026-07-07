@@ -18,14 +18,14 @@ public class BanStep {
     public Step banBatchStep(JobRepository jobRepository, PlatformTransactionManager txtManager,
                         FlatFileItemReader<Ban> csvReader,
                         CompositeItemProcessor<Ban, Ban> compositeItemProcessor,
-                        ItemWriter<Ban> writer,
+                        ItemWriter<Ban> compositeWriter,
                         BanStepListener listener) {
         return new StepBuilder("banBatchStep", jobRepository)
                 .<Ban, Ban>chunk(5000)
                 .transactionManager(txtManager)
                 .reader(csvReader)
                 .processor(compositeItemProcessor)
-                .writer(writer)
+                .writer(compositeWriter)
                 .listener(listener)
                 .build();
     }
