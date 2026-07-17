@@ -31,10 +31,10 @@ public class BanProcessor {
     @StepScope
     public ItemProcessor<Ban, Ban> processorFilter(
             @Value("#{jobParameters['codePostal']}") Integer codePostal,
-            @Value("#{jobParameters['codeInsee']}") Integer codeInsee
+            @Value("#{jobParameters['codeInsee']}") String codeInsee
     ) {
         return ban -> {
-            if (codePostal == null && codeInsee == null) {
+            if (codePostal == null && codeInsee.isEmpty()) {
                 return ban;
             }
 
@@ -42,7 +42,7 @@ public class BanProcessor {
             if (codePostal != null) {
                 match &= codePostal.equals(ban.getCodePostal());
             }
-            if (codeInsee != null) {
+            if (!codeInsee.isEmpty()) {
                 match &= codeInsee.equals(ban.getCodeInsee());
             }
 

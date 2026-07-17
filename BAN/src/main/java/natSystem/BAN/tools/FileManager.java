@@ -2,7 +2,6 @@ package natSystem.BAN.tools;
 
 
 import com.google.code.externalsorting.ExternalSort;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -12,10 +11,19 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 /**
  * Outil de gestion de fichiers permettant l'écriture, la vérification,
@@ -26,15 +34,15 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 public class FileManager {
-	private String fileName;
+	private String file;
 	private FileWriter writer;
 
-	public FileManager(String fileName) {
-		this.fileName = fileName;
+	public FileManager(String file) {
+		this.file = file;
 		try {
-			this.writer = new FileWriter(fileName, true);
+			this.writer = new FileWriter(file, true);
 		} catch (IOException e) {
-			System.err.println("Impossible d'ouvrir le fichier : " + fileName);
+			System.err.println("Impossible d'ouvrir le fichier : " + file);
 		}
 	}
 
@@ -55,17 +63,8 @@ public class FileManager {
 		}
 	}
 
-	public boolean isCSVExisting() {
-		Path chemin = Path.of(fileName);
-		if (!Files.isRegularFile(chemin)
-		        || !chemin.getFileName().toString().toLowerCase().endsWith(".csv")) {
-		    System.err.println("Ce n'est pas un fichier CSV.");
-		}
-		return Files.isRegularFile(chemin) && chemin.getFileName().toString().toLowerCase().endsWith(".csv");
-	}
-
 	public void sortCSV() {
-		File input = new File(fileName);
+		File input = new File(file);
 		File output = new File("csv_sorted.csv");
 
 		Comparator<String> comparator = (a, b) -> {
@@ -84,14 +83,11 @@ public class FileManager {
 
 	public long countFileLine() {
 		long count = 0;
-		Path path = Path.of(fileName);
-		TimerTool timer = new TimerTool();
+		Path path = Path.of(file);
 		try (BufferedReader reader = Files.newBufferedReader(path)) {
 			while (reader.readLine() != null) {
 				count++;
 			}
-			log.info("Nombre de ligne : " + count);
-			log.info("Temps passer a connaitre le nombre de ligne : " + timer.showTimer());
 		} catch (IOException e){
 			System.err.println("Erreur lors du comptage du nombre de ligne du fichier");
 		}
@@ -99,7 +95,47 @@ public class FileManager {
 	}
 
 	public String getAbsolutePath() {
-		Path path = Path.of(fileName);
+		Path path = Path.of(file);
 		return path.toAbsolutePath().toString();
+	}
+
+	public boolean isFileEmpty () {
+		return new File(file).length() <= 0;
+	}
+
+	public boolean isCsvValid(){
+
+		String header =
+				"id;id_fantoir;numero;rep;nom_voie;code_postal;code_insee;nom_commune;code_insee_ancienne_commune;nom_ancienne_commune;x;y;lon;lat;type_position;alias;nom_ld;libelle_acheminement;nom_afnor;source_position;source_nom_voie;certification_commune;cad_parcelles";
+		if (!isFileEmpty()){
+			try (BufferedReader reader = Files.newBufferedReader(Path.of(file))) {
+				String premiereLigne = reader.readLine();
+				if (premiereLigne != null && premiereLigne.equals(header)) {
+					return true;
+				}
+			} catch (IOException e){
+				System.err.println("Erreur de lecture de fichier lors de la vérification du csv : " + e);
+			}
+		}
+		return false;
+	}
+
+	public void archiverFichier (String name){
+		Path archiveDir = Path.of("Archive");
+		try{
+			Files.createDirectories(archiveDir);
+		} catch (IOException e){
+			System.err.println("Erreur lors de la création du répertoire archive : " + e);
+		}
+
+
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH-mm-ss");
+		String archiveFileName = "Archive/"+ LocalDateTime.now().format(formatter) + "_" + name;
+
+		try {
+			Files.move(Paths.get(file), Paths.get(archiveFileName));
+		} catch (IOException e) {
+			System.err.println("Erreur pendant l'archivage du ficher : " + e);
+		}
 	}
 }

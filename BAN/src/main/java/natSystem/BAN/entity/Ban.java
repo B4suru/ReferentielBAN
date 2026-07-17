@@ -33,7 +33,7 @@ public class Ban {
     private Integer codePostal;
 
 	@Column(name = "code_insee")
-    private Integer codeInsee;
+    private String codeInsee;
 
 	@Column(name = "nom_commune")
     private String nomCommune;

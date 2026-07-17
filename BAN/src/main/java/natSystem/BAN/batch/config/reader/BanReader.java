@@ -1,10 +1,11 @@
 package natSystem.BAN.batch.config.reader;
 
 import natSystem.BAN.entity.Ban;
-import natSystem.BAN.tools.ParseTool;
+import natSystem.BAN.tools.Tool;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.infrastructure.item.file.FlatFileItemReader;
 import org.springframework.batch.infrastructure.item.file.builder.FlatFileItemReaderBuilder;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.FileSystemResource;
@@ -14,10 +15,10 @@ public class BanReader {
 
     @Bean
     @StepScope
-    public FlatFileItemReader<Ban> csvReader() {
+    public FlatFileItemReader<Ban> csvReader(@Value("#{stepExecutionContext['file']}") String file) {
         return new FlatFileItemReaderBuilder<Ban>()
                 .name("banCsvReader")
-                .resource(new FileSystemResource("csv_sorted.csv"))
+                .resource(new FileSystemResource(file))
                 .delimited()
                 .delimiter(";")
                 .strict(false)
@@ -50,13 +51,13 @@ public class BanReader {
                 )
                 .fieldSetMapper(fs -> {
                     Ban b = new Ban();
-                    ParseTool parseTool = new ParseTool();
+                    Tool parseTool = new Tool();
                     b.setId(fs.readString("id"));
                     b.setNumero(parseTool.parseIntSafe(fs.readString("numero")));
                     b.setRep(fs.readString("rep"));
                     b.setNomVoie(fs.readString("nom_voie"));
                     b.setCodePostal(parseTool.parseIntSafe(fs.readString("code_postal")));
-                    b.setCodeInsee(parseTool.parseIntSafe(fs.readString("code_insee")));
+                    b.setCodeInsee(fs.readString("code_insee"));
                     b.setNomCommune(fs.readString("nom_commune"));
                     b.setX(parseTool.parseDoubleSafe(fs.readString("x")));
                     b.setY(parseTool.parseDoubleSafe(fs.readString("y")));

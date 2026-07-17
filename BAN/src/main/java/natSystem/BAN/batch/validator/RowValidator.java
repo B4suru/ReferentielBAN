@@ -1,7 +1,5 @@
 package natSystem.BAN.batch.validator;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.regex.Pattern;
 
 import org.springframework.batch.infrastructure.item.validator.ValidationException;
@@ -12,7 +10,7 @@ import natSystem.BAN.tools.FileManager;
 
 
 public class RowValidator implements Validator<Ban> {
-	private static final Pattern ID_PATTERN = Pattern.compile("^\\d{5}_[a-zA-Z0-9]{4,6}_\\d{5}(_.+)?$");
+	private static final Pattern ID_PATTERN = Pattern.compile("^[a-zA-Z0-9]{5}_[a-zA-Z0-9]{4,6}_\\d{5}(_.+)?$");
 	private Ban dernierBan = null;
 	private final FileManager logs;
 
@@ -58,7 +56,7 @@ public class RowValidator implements Validator<Ban> {
             throw new ValidationException("Le code postal est obligatoire (id : " + ban.getId()+ ")");
         }
 
-		if (ban.getCodeInsee() == null) {
+		if (ban.getCodeInsee().isEmpty()) {
 			this.logs.write("Le code insee est obligatoire (id : " + ban.getId()+ ")");
             throw new ValidationException("Le code insee est obligatoire (id : " + ban.getId()+ ")");
         }

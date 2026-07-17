@@ -9,8 +9,6 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
-import natSystem.BAN.tools.FileManager;
-
 @Slf4j
 @OpenAPIDefinition(
 		info = @Info(
@@ -23,10 +21,5 @@ import natSystem.BAN.tools.FileManager;
 public class BanApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(BanApplication.class, args);
-	}
-	
-	@Bean
-	public CommandLineRunner banRunner(BatchInitialization initialization) {
-		return args -> initialization.run();
 	}
 }

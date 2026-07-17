@@ -29,7 +29,7 @@ public class LuceneWriter implements ItemWriter<Ban> {
         doc.add(new StoredField("rep", ban.getRep() != null ? ban.getRep() : ""));
         doc.add(new StoredField("nomVoie", ban.getNomVoie() != null ? ban.getNomVoie() : ""));
         doc.add(new StoredField("codePostal", ban.getCodePostal() != null ? ban.getCodePostal() : 0));
-        doc.add(new StoredField("codeInsee", ban.getCodeInsee() != null ? ban.getCodeInsee() : 0));
+        doc.add(new StoredField("codeInsee", ban.getCodeInsee() != null ? ban.getCodeInsee() : ""));
         doc.add(new StoredField("nomCommune", ban.getNomCommune() != null ? ban.getNomCommune() : ""));
         doc.add(new StoredField("x", ban.getX()));
         doc.add(new StoredField("y", ban.getY()));

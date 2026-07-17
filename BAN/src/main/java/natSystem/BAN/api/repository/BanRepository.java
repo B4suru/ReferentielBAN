@@ -31,4 +31,16 @@ public interface BanRepository extends JpaRepository<Ban, String> {
             @Param("rep") String rep,
             Pageable pageable
     );
+
+    @Query("""
+        SELECT b FROM Ban b
+        WHERE b.lat > (:lat) - (:latDiff) AND b.lat < (:lat) + (:latDiff)
+        AND b.lon > (:lon) - (:lonDiff) AND b.lon < (:lon) + (:lonDiff)
+        """)
+    List<Ban>reverseSearch(
+            @Param("lat") double lat,
+            @Param("lon") double lon,
+            @Param("latDiff") double latDiff,
+            @Param("lonDiff") double lonDiff
+    );
 }
