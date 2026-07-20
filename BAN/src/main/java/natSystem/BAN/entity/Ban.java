@@ -50,6 +50,8 @@ public class Ban {
 	@Column(name = "lat")
     private double lat;
 
+	private double distance;
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)

@@ -3,7 +3,9 @@ PRAGMA synchronous = NORMAL;
 PRAGMA cache_size = -3000000;
 PRAGMA temp_store = MEMORY;
 
-CREATE TABLE IF NOT EXISTS ban (
+DROP TABLE IF EXISTS ban;
+
+CREATE TABLE ban (
      id TEXT PRIMARY KEY,
      numero INTEGER,
      rep TEXT,

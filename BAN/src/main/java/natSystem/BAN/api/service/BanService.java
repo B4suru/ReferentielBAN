@@ -2,7 +2,9 @@ package natSystem.BAN.api.service;
 
 import lombok.extern.slf4j.Slf4j;
 import natSystem.BAN.tools.TimerTool;
-import org.apache.lucene.search.Query;
+import org.apache.lucene.document.LatLonDocValuesField;
+import org.apache.lucene.document.LatLonPoint;
+import org.apache.lucene.search.*;
 import lombok.AllArgsConstructor;
 import natSystem.BAN.entity.Ban;
 import natSystem.BAN.api.repository.BanRepository;
@@ -10,9 +12,6 @@ import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.queryparser.classic.QueryParser;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.ScoreDoc;
-import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.Directory;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -117,6 +116,36 @@ public class BanService {
             throw new RuntimeException("Erreur lors de la recherche", e);
         }
         return results;
+    }
+
+    public Ban reverseSearchLucene(double lat, double lon, double radiusMeters) {
+        try (DirectoryReader reader = DirectoryReader.open(directory)) {
+            IndexSearcher searcher = new IndexSearcher(reader);
+
+            Query query = LatLonPoint.newDistanceQuery("location", lat, lon, radiusMeters);
+
+            Sort sort = new Sort(
+                    LatLonDocValuesField.newDistanceSort("location", lat, lon)
+            );
+
+            TopDocs topDocs = searcher.search(query, 1, sort);
+
+            if (topDocs.scoreDocs.length == 0) {
+                return null;
+            }
+
+            FieldDoc fieldDoc = (FieldDoc) topDocs.scoreDocs[0];
+            double distanceMeters = (double) fieldDoc.fields[0];
+
+            Document document = searcher.doc(fieldDoc.doc);
+            Ban ban = toBan(document);
+            ban.setDistance(distanceMeters);
+
+            return ban;
+
+        } catch (Exception e) {
+            throw new RuntimeException("Erreur lors de la recherche inversée", e);
+        }
     }
 
     private Ban toBan(Document d) {

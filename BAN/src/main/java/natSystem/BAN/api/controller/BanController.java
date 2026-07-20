@@ -56,4 +56,9 @@ public class BanController {
             @RequestParam(required = false) Double lonDiff){
         return banService.reverseSearch(lat, lon, latDiff, lonDiff);
     }
+
+    @GetMapping("/reverse-search-lucene")
+    public Ban reverseSearchLucene (@RequestParam double lat, @RequestParam double lon, @RequestParam Double radiusMeters){
+        return banService.reverseSearchLucene(lat, lon, radiusMeters);
+    }
 }

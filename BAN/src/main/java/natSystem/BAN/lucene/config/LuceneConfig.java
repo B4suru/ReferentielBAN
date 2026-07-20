@@ -29,10 +29,10 @@ public class LuceneConfig {
         return new AddressAnalyzer();
     }
 
-    @Bean
+    @Bean(destroyMethod = "close")
     public IndexWriter indexWriter(Directory directory, Analyzer analyzer) throws IOException {
         IndexWriterConfig config = new IndexWriterConfig(analyzer);
-        config.setOpenMode(IndexWriterConfig.OpenMode.CREATE);
+        config.setOpenMode(IndexWriterConfig.OpenMode.CREATE_OR_APPEND);
         return new IndexWriter(directory, config);
     }
 }

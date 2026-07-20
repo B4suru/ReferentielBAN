@@ -35,6 +35,8 @@ public class LuceneWriter implements ItemWriter<Ban> {
         doc.add(new StoredField("y", ban.getY()));
         doc.add(new StoredField("lon", ban.getLon()));
         doc.add(new StoredField("lat", ban.getLat()));
+        doc.add(new LatLonPoint("location", ban.getLat(), ban.getLon()));
+        doc.add(new LatLonDocValuesField("location", ban.getLat(), ban.getLon()));
 
         String full = String.join(" ",
                 ban.getNumero() != null ? String.valueOf(ban.getNumero()) : "",
