@@ -106,7 +106,8 @@ public class DvfReader {
                     d.setSurfaceTerrain(parseTool.parseIntSafe(fs.readString("surface_terrain")));
                     d.setLongitude(parseTool.parseDoubleSafe(fs.readString("longitude")));
                     d.setLatitude(parseTool.parseDoubleSafe(fs.readString("latitude")));
-                    return d;})
+                    return d;
+                })
             .linesToSkip(1)
             .build();
     }

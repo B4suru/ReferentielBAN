@@ -29,7 +29,7 @@ public class GeoJsonItemReader implements ItemStreamReader<CommunesGeoJson> {
 
             while (parser.nextToken() != JsonToken.FIELD_NAME
                     || !"features".equals(parser.currentName())) {
-                // Go through the json file until the "feature" fields
+                //Ne rien faire tant que l'on n'a pas attein la partie "features" du fichier geojson
             }
 
             parser.nextToken();

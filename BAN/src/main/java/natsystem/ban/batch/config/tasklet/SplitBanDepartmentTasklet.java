@@ -9,16 +9,16 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Component
-public class SplitDepartmentTasklet extends AbstractSplitDepartmentTasklet {
+public class SplitBanDepartmentTasklet extends AbstractSplitDepartmentTasklet {
     private final Set<String> usedDepts = new HashSet<>();
 
     @Override
-    protected String getInputFile(ChunkContext chunkContext) {
+    public String getInputFile(ChunkContext chunkContext) {
         return "csv_sorted.csv";
     }
 
     @Override
-    protected String extractDepartment(String line) {
+    public String extractDepartment(String line) {
         String id = line.split(";", 2)[0];
         String dept;
 
@@ -32,7 +32,7 @@ public class SplitDepartmentTasklet extends AbstractSplitDepartmentTasklet {
     }
 
     @Override
-    protected void afterExecution(ChunkContext chunkContext)  {
+    public void afterExecution(ChunkContext chunkContext)  {
         chunkContext.getStepContext()
                 .getStepExecution()
                 .getJobExecution()

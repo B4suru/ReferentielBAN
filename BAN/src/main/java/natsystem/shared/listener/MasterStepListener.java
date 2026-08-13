@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 public class MasterStepListener implements StepExecutionListener {
     private final FileManager rapport;
 
-    MasterStepListener(FileManager rapportFileManager) {
+    public MasterStepListener(FileManager rapportFileManager) {
         this.rapport = rapportFileManager;
     }
 

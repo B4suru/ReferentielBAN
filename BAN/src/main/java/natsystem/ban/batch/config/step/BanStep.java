@@ -2,7 +2,7 @@ package natsystem.ban.batch.config.step;
 
 import natsystem.ban.batch.config.tasklet.DeleteUnusedDeptTasklet;
 import natsystem.ban.batch.config.tasklet.RetrieveBanFileTasklet;
-import natsystem.ban.batch.config.tasklet.SplitDepartmentTasklet;
+import natsystem.ban.batch.config.tasklet.SplitBanDepartmentTasklet;
 import natsystem.ban.batch.listener.BanStepListener;
 import natsystem.shared.listener.MasterStepListener;
 import natsystem.shared.partitioner.DepartementPartitioner;
@@ -40,7 +40,7 @@ public class BanStep {
 
 
     @Bean
-    public Step banSplitStep(JobRepository jobRepository, PlatformTransactionManager txtManager, SplitDepartmentTasklet tasklet) {
+    public Step banSplitStep(JobRepository jobRepository, PlatformTransactionManager txtManager, SplitBanDepartmentTasklet tasklet) {
         return new StepBuilder("splitStep", jobRepository)
                 .tasklet(tasklet, txtManager)
                 .build();

@@ -50,7 +50,7 @@ public class BanRowValidator implements Validator<Ban> {
 	}
 
 	private void validateRequiredFields(Ban ban) throws ValidationException {
-		if (ban.getNumero() == null) {
+		if (ban.getNumero() < 0) {
 			error("Le numero ne peux pas etre inférieur a 0 (id : " + ban.getId()+ ")");
 		}
 
@@ -62,7 +62,7 @@ public class BanRowValidator implements Validator<Ban> {
 			error("Le code postal est obligatoire (id : " + ban.getId()+ ")");
 		}
 
-		if (ban.getCodeInsee().isEmpty()) {
+		if (ban.getCodeInsee() == null || ban.getCodeInsee().isBlank()) {
 			error("Le code insee est obligatoire (id : " + ban.getId()+ ")");
 		}
 

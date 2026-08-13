@@ -11,12 +11,22 @@ import java.nio.file.Path;
 public class Tool {
     public Integer parseIntSafe(String v) {
         if (v == null || v.isBlank()) return null;
-        return Integer.parseInt(v);
+        try {
+            return Integer.parseInt(v.trim());
+        } catch (NumberFormatException _) {
+            log.warn("Valeur entière invalide ignorée : " + v);
+            return null;
+        }
     }
 
     public Double parseDoubleSafe(String v) {
         if (v == null || v.isBlank()) return 0.0;
-        return Double.parseDouble(v);
+        try {
+            return Double.parseDouble(v.trim());
+        } catch (NumberFormatException _) {
+            log.warn("Valeur décimale invalide ignorée : " + v);
+            return 0.0;
+        }
     }
 
     public static void deleteTempFile(String fileName){

@@ -48,15 +48,6 @@ public class BanController {
     @GetMapping("/autocomplete")
     public List<Ban> autocomplete (@RequestParam String adresse) { return banService.freeSearch(adresse,5); }
 
-    @GetMapping("/reverse-search")
-    public Ban reverseSearch (
-            @RequestParam double lat,
-            @RequestParam double lon,
-            @RequestParam(required = false) Double latDiff,
-            @RequestParam(required = false) Double lonDiff){
-        return banService.reverseSearch(lat, lon, latDiff, lonDiff);
-    }
-
     @GetMapping("/reverse-search-lucene")
     public Ban reverseSearchLucene (@RequestParam double lat, @RequestParam double lon, @RequestParam Double radiusMeters){
         return banService.reverseSearchLucene(lat, lon, radiusMeters);

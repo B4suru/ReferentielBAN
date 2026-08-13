@@ -18,10 +18,10 @@ import java.util.Arrays;
 @Configuration
 public class BanProcessor {
     @Value("${filtre.codePostal}")
-    private Long codePostal;
+    public Integer codePostal;
 
     @Value("${filtre.codeInsee}")
-    private String codeInsee;
+    public String codeInsee;
 
     @Bean
     @StepScope

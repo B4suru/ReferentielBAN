@@ -47,43 +47,6 @@ public class BanService {
         return repo.rechercher(cp, rue,commune, numero, rep, pageable);
     }
 
-    public Ban reverseSearch(double lat, double lon, Double latDiff, Double lonDiff){
-        if (latDiff == null){
-            latDiff = 0.00300;
-        }
-
-        if (lonDiff == null){
-            lonDiff = 0.00300;
-        }
-
-        List<Ban> nearBan = repo.reverseSearch(lat, lon, latDiff, lonDiff);
-
-        Double rangeMin = null;
-        Ban rangeMinBan = null;
-        for (Ban ban : nearBan) {
-            double range = haversine(ban.getLat(), ban.getLon(), lat, lon);
-            if (rangeMin ==null || range < rangeMin){
-                rangeMin = range;
-                rangeMinBan = ban;
-            }
-        }
-        return rangeMinBan;
-    }
-
-    private double haversine(double lat1, double lon1, double lat2, double lon2) {
-        double dLat = Math.toRadians(lat2 - lat1);
-        double dLon = Math.toRadians(lon2 - lon1);
-
-        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2)
-                + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2))
-                * Math.sin(dLon / 2) * Math.sin(dLon / 2);
-
-        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-
-
-        return 6371000 * c;
-    }
-
     public List<Ban> freeSearch(String adresse, int nbResult) {
         List<Ban> results = new ArrayList<>();
         if (adresse == null || adresse.isBlank()) {
